@@ -1,0 +1,89 @@
+ReportDefinitions:
+- reportName: StreetVendingReport
+  decryptionPathId: TradeLicenseDailyCollectionReport
+  summary: Daily Register Report for street vending
+  version: 1.0.0
+  moduleName: sv-report
+  sourceColumns:
+  - name: svapplicationno
+    label: Application Number
+    type: string
+    source: sv-services
+    total: false
+  - name: vendorname
+    label: Vendor Name
+    type: string
+    source: sv-services
+    total: false
+  - name: addresslocality
+    label: Locality
+    type: string
+    source: sv-services
+    total: false
+  - name: svvendingactivity
+    label: Vending Type
+    type: string
+    source: sv-services
+    total: false
+  - name: svvendingzone
+    label: Vending Zone
+    type: string
+    source: sv-services
+    total: false
+  - name: svcertificateno
+    label: Certificate Number
+    type: string
+    source: sv-services
+    total: false
+  - name: svapplicationstatus
+    label: Application Status
+    type: string
+    source: sv-services
+    total: false
+  - name: approvedby
+    label: Approved By
+    type: string
+    source: sv-services
+    total: false
+  - name: ampaid
+    label: Amount Paid
+    type: string
+    source: sv-services
+    total: false
+
+  searchParams:
+  - name: svapplicationstatus
+    label: Application Status
+    type: singlevaluelist
+    pattern: 'list://APPLIED:Applied,APPROVED:Approved,REGISTRATIONCOMPLETED:Registration Completed,INSPECTIONPENDING:Inspection Pending,REJECTED:Rejected'
+    source: sv-services
+    isMandatory: false
+    searchClause: AND sv.application_status = $svapplicationstatus
+  - name: svvendingzone
+    label: Vending Zone
+    type: singlevaluelist
+    pattern: 'list://TEST_VALUE_ONE:TEST_VALUE_ONE,TEST_VALUE_TWO:TEST_VALUE_TWO'
+    source: sv-services
+    isMandatory: false
+    searchClause: AND sv.vending_zone = $svvendingzone
+  - name: svvendingactivity
+    label: Vending Type
+    type: singlevaluelist
+    pattern: 'list://STATIONARY:Stationary,MOBILE:Mobile'
+    source: sv-services
+    isMandatory: false
+    searchClause: AND sv.vending_activity = $svvendingactivity
+  - name: fromDate
+    label: From Date
+    type: epoch
+    source: sv-services
+    isMandatory: true
+    searchClause: AND sv.createdtime >= $fromDate
+  - name: toDate
+    label: To Date
+    type: epoch
+    source: sv-services
+    isMandatory: true
+    searchClause: AND sv.createdtime  <= $toDate
+ 
+  query: SELECT usr.uuid AS uuid, sv.application_no AS svapplicationno, sv.createdtime AS svcreatedtime, sv.certificate_no AS svcertificateno, sv.application_status AS svapplicationstatus, sv.vending_activity AS svvendingactivity, sv.vending_zone AS svvendingzone, vendor.application_id AS vendorapplicationid, vendor.name AS vendorname, address.locality AS addresslocality, address.locality_code AS addresslocalitycode, bill.consumercode AS consumercode, pdetail.amountpaid AS ampaid, CASE WHEN sv.application_status='APPROVED' THEN usr.name ELSE '-NA-' END AS approvedby FROM eg_sv_street_vending_detail sv LEFT JOIN eg_sv_vendor_detail vendor ON sv.application_id = vendor.application_id LEFT JOIN eg_sv_address_detail address ON vendor.id = address.vendor_id LEFT JOIN eg_user usr ON sv.lastmodifiedby = usr.uuid LEFT JOIN egcl_bill bill ON sv.application_no = bill.consumercode LEFT JOIN egcl_paymentdetail pdetail ON bill.id = pdetail.billid
