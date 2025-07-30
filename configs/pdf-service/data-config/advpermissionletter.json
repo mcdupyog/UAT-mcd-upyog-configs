@@ -159,7 +159,7 @@
               "externalAPI": [
                 {
                   "path": "http://egov-mdms-service:8080/egov-mdms-service/v1/_get",
-                  "queryParam": "moduleName=tenant&masterName=tenants&tenantId=pg&filter=%5B?(@.code=='{$.tenantId}')%5D",
+                  "queryParam": "moduleName=tenant&masterName=tenants&tenantid=dl&filter=%5B?(@.code=='{$.tenantId}')%5D",
                   "apiRequest": null,
                   "responseMapping": [
                     {
@@ -196,7 +196,7 @@
                 },
                 {
                     "path": "http://collection-services:8080/collection-services/payments/adv-services/_search",
-                    "queryParam": "tenantId=pg.mohali,consumerCode=$.bookingNo",
+                    "queryParam": "tenantid=dl.mohali,consumerCode=$.bookingNo",
                      "apiRequest": null,
                      "responseMapping": [
                        {
@@ -219,7 +219,7 @@
                    },
                 {
                   "path": "http://adv-services:8080/adv-services/booking/v1/_search",
-                  "queryParam": "tenantId=pg.mohali",
+                  "queryParam": "tenantid=dl.mohali",
                   "apiRequest": null,
                   "responseMapping": [
                     {
@@ -230,7 +230,7 @@
                 },
                 {
                     "path": "http://egov-mdms-service:8080/egov-mdms-service/v1/_get",
-                    "queryParam": "moduleName=Advertisement&masterName=AdvServices&tenantId=pg",
+                    "queryParam": "moduleName=Advertisement&masterName=AdvServices&tenantid=dl",
                     "apiRequest": null,
                     "responseMapping": [
                       {
@@ -241,7 +241,7 @@
               },
               {
                 "path": "http://egov-mdms-service:8080/egov-mdms-service/v1/_get",
-                "queryParam": "moduleName=Advertisement&masterName=AdvServices&tenantId=pg",
+                "queryParam": "moduleName=Advertisement&masterName=AdvServices&tenantid=dl",
                   "apiRequest": null,
                   "responseMapping": [
                     {
@@ -268,7 +268,7 @@
                 },
                 {
                   "path": "http://egov-mdms-service:8080/egov-mdms-service/v1/_get",
-                  "queryParam": "moduleName=tenant&masterName=footer&tenantId=pg&filter=%5B?(@.code=='{$.tenantId}' %26%26 @.service=='{$.paymentDetails[0].businessService}')%5D",
+                  "queryParam": "moduleName=tenant&masterName=footer&tenantid=dl&filter=%5B?(@.code=='{$.tenantId}' %26%26 @.service=='{$.paymentDetails[0].businessService}')%5D",
                   "apiRequest": null,
                   "responseMapping": [
                     {

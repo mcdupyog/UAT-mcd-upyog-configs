@@ -169,7 +169,7 @@
                         "externalAPI": [
                             {
                               "path": "http://egov-mdms-service:8080/egov-mdms-service/v1/_get",
-                                "queryParam": "moduleName=tenant&masterName=tenants&tenantId=pg&filter=%5B?(@.code=='{$.tenantId}')%5D",
+                                "queryParam": "moduleName=tenant&masterName=tenants&tenantid=dl&filter=%5B?(@.code=='{$.tenantId}')%5D",
                                 "apiRequest": null,
                                 "responseMapping": [
                                     {
@@ -197,7 +197,7 @@
                             },
                             {
                                 "path": "http://egov-mdms-service:8080/egov-mdms-service/v1/_get",
-                                "queryParam": "moduleName=CHB&masterName=CommunityHalls&tenantId=pg",
+                                "queryParam": "moduleName=CHB&masterName=CommunityHalls&tenantid=dl",
                               "apiRequest": null,
                               "responseMapping": [
                                   {
@@ -212,7 +212,7 @@
                           },
                           {
                               "path": "http://egov-mdms-service:8080/egov-mdms-service/v1/_get",
-                              "queryParam": "moduleName=CHB&masterName=CalculationType&tenantId=pg",
+                              "queryParam": "moduleName=CHB&masterName=CalculationType&tenantid=dl",
                               "apiRequest": null,
                               "responseMapping": [
                                   {
@@ -223,7 +223,7 @@
                           },
                           {
                               "path": "http://egov-mdms-service:8080/egov-mdms-service/v1/_get",
-                              "queryParam": "moduleName=CHB&masterName=CommunityHalls&tenantId=pg",
+                              "queryParam": "moduleName=CHB&masterName=CommunityHalls&tenantid=dl",
                               "apiRequest": null,
                               "responseMapping": [
                                 {
@@ -250,7 +250,7 @@
                             },    
                             {
                               "path": "http://collection-services:8080/collection-services/payments/chb-services/_search",
-                               "queryParam": "tenantId=pg.citya,consumerCode=$.bookingNo",
+                               "queryParam": "tenantid=dl.citya,consumerCode=$.bookingNo",
                               "apiRequest": null,
                               "responseMapping": [
                                 {

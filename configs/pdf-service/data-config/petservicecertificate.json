@@ -263,7 +263,7 @@
           "externalAPI": [     
             { 
                 "path": "http://egov-mdms-service:8080/egov-mdms-service/v1/_get",
-                "queryParam": "moduleName=tenant&masterName=tenants&tenantId=pg&filter=%5B?(@.code=='{$.tenantId}')%5D",
+                "queryParam": "moduleName=tenant&masterName=tenants&tenantid=dl&filter=%5B?(@.code=='{$.tenantId}')%5D",
                 "apiRequest": null,
                 "responseMapping": [
                   {
@@ -319,7 +319,7 @@
         },
         {
           "path": "http://egov-filestore:8080/filestore/v1/files/url",
-          "queryParam": "tenantId=pg&fileStoreIds=$.documents[3].fileStoreId",
+          "queryParam": "tenantid=dl&fileStoreIds=$.documents[3].fileStoreId",
           "apiRequest": null,
           "requesttype": "GET",
           "responseMapping": [
