@@ -1,7 +1,7 @@
 ReportDefinitions:
 - reportName: PTReceiptRegister
   decryptionPathId: PTReceiptRegister
-  summary: Report is used for audit, day-end, and year-end finance reconciliation activities 
+  summary: Report is used for audit, day-end, and year-end finance reconciliation activities
   version: 1.0.0
   moduleName: pt-reports
   sourceColumns:
@@ -24,7 +24,7 @@ ReportDefinitions:
     label: reports.pt.user_uuid
     type: string
     source: pt
-    showColumn: false 
+    showColumn: false
   - name: amountCollected
     label: reports.pt.amountCollected
     type: string
@@ -73,16 +73,16 @@ ReportDefinitions:
     source: pt
     wrapper: true
     isMandatory: false
-    searchClause: AND ep.createdby= $collectorname   
+    searchClause: AND ep.createdby= $collectorname
   query: |
-        SELECT receiptnumber,payerName,To_char(To_timestamp(ed.receiptdate / 1000), 'DD/MM/YYYY') AS paymentdate,users.name as name,users.uuid as user_uuid,
-        transactionnumber,totalamountpaid AS amountCollected,ep.instrumentnumber as chequeNo,ROW_NUMBER() OVER(PARTITION BY receiptnumber) AS RowNum FROM egcl_payment AS ep
-        JOIN egcl_paymentdetail AS ed ON ep.id = ed.paymentid JOIN egcl_bill as bill on ed.billid=bill.id JOIN eg_pt_property as property on bill.consumercode=property.propertyid JOIN eg_pt_owner as owner on property.id=owner.propertyid  JOIN eg_user as users on owner.userid=users.uuid where 1=1  and ed.businessservice='PT' and ep.paymentstatus !='CANCELLED' and ep.tenantid=$tenantid and owner.status='ACTIVE' and property.status='ACTIVE'
+    SELECT receiptnumber,payerName,To_char(To_timestamp(ed.receiptdate / 1000), 'DD/MM/YYYY') AS paymentdate,users.name as name,users.uuid as user_uuid,
+    transactionnumber,totalamountpaid AS amountCollected,ep.instrumentnumber as chequeNo,ROW_NUMBER() OVER(PARTITION BY receiptnumber) AS RowNum FROM egcl_payment AS ep
+    JOIN egcl_paymentdetail AS ed ON ep.id = ed.paymentid JOIN egcl_bill as bill on ed.billid=bill.id JOIN eg_pt_property as property on bill.consumercode=property.propertyid JOIN eg_pt_owner as owner on property.id=owner.propertyid  JOIN eg_user as users on owner.userid=users.uuid where 1=1  and ed.businessservice='PT' and ep.paymentstatus !='CANCELLED' and ep.tenantid=$tenantid and owner.status='ACTIVE' and property.status='ACTIVE'
   orderby: order by ed.receiptdate desc
 
 - reportName: PTCollectionReport
   decryptionPathId: PTCollectionReport
-  summary: It helps administrators track the collection in the ULB and the employee collection performance. 
+  summary: It helps administrators track the collection in the ULB and the employee collection performance.
   version: 1.0.0
   moduleName: pt-reports
   sourceColumns:
@@ -112,7 +112,7 @@ ReportDefinitions:
     label: reports.pt.totaltransactions
     type: string
     source: pt
-    total: false  
+    total: false
   - name: amountCollected
     label: reports.pt.amountCollected
     type: string
@@ -140,17 +140,17 @@ ReportDefinitions:
     isMandatory: false
     localisationPrefix: TENANTS_MOHALLA_
     isLocalisationRequired: true
-    searchClause: AND ptd.locality = $locality  
+    searchClause: AND ptd.locality = $locality
   - name: paymentinstrument
     label: paymentinstrument
     type: singlevaluelist
     pattern: 'list://CASH:CASH,CARD:CARD,DD:DD,CHEQUE:CHEQUE'
     source: pt
     isMandatory: false
-    searchClause: AND paymentmode = $paymentinstrument  
+    searchClause: AND paymentmode = $paymentinstrument
   query: |
-        SELECT ptd.locality AS locality, users.name as name,users.uuid as user_uuid, count(*) as totaltransactions,sum(totalamountpaid) AS amountCollected,paymentmode AS paymentinstrument FROM egcl_payment AS ep
-        JOIN egcl_paymentdetail AS ed ON ep.id = ed.paymentid JOIN egcl_bill  as bill on ed.billid=bill.id JOIN eg_pt_property as property on bill.consumercode=property.propertyid JOIN eg_pt_address as ptd on property.id=ptd.propertyid JOIN eg_user as users on ep.createdby::int=users.id JOIN eg_userrole_v1 as userrole on users.id=userrole.user_id  where 1=1  and ed.businessservice='PT' and ep.paymentstatus !='CANCELLED' and ep.tenantid=$tenantid and userrole.role_tenantid=$tenantid and ep.paymentmode!='ONLINE' and userrole.role_code='PT_CEMP' and property.status='ACTIVE'
+    SELECT ptd.locality AS locality, users.name as name,users.uuid as user_uuid, count(*) as totaltransactions,sum(totalamountpaid) AS amountCollected,paymentmode AS paymentinstrument FROM egcl_payment AS ep
+    JOIN egcl_paymentdetail AS ed ON ep.id = ed.paymentid JOIN egcl_bill  as bill on ed.billid=bill.id JOIN eg_pt_property as property on bill.consumercode=property.propertyid JOIN eg_pt_address as ptd on property.id=ptd.propertyid JOIN eg_user as users on ep.createdby::int=users.id JOIN eg_userrole_v1 as userrole on users.id=userrole.user_id  where 1=1  and ed.businessservice='PT' and ep.paymentstatus !='CANCELLED' and ep.tenantid=$tenantid and userrole.role_tenantid=$tenantid and ep.paymentmode!='ONLINE' and userrole.role_code='PT_CEMP' and property.status='ACTIVE'
   groupby: group by locality,name,paymentinstrument,user_uuid
 
 - reportName: DefaulterReport
@@ -223,7 +223,7 @@ ReportDefinitions:
     isLocalisationRequired: false
     searchClause: AND usagecategory = $usagetype
   query: |
-        select * from (SELECT  property.propertyid, usr.name as name, usr.mobilenumber as mobilenumber,usr.guardian as guardian,usr.guardianrelation as relation, property.usagecategory, locality  FROM EG_PT_PROPERTY property INNER JOIN EG_PT_ADDRESS address ON property.id = address.propertyid INNER JOIN EG_PT_OWNER owner ON property.id = owner.propertyid INNER JOIN eg_user usr ON owner.userid=usr.uuid WHERE  property.tenantId=$tenantid AND owner.status = 'ACTIVE' AND property.status = 'ACTIVE') as propertydata INNER JOIN (select consumercode,sum(taxdue) as taxDue, STRING_AGG(year || '(Rs.' || taxdue || ')',',')  as taxDueYear from ( select d.consumercode, (to_char((To_timestamp(d.taxperiodfrom/1000) at time Zone 'Asia/Kolkata'),'YYYY') || '-' || to_char((To_timestamp(d.taxperiodto/1000) at time Zone 'Asia/Kolkata'),'YY')) as year ,  sum(dd.taxamount)-sum(dd.collectionamount) as taxdue from egbs_demanddetail_v1 dd, egbs_demand_v1 d where dd.demandid=d.id and d.status!='CANCELLED' and dd.tenantid=$tenantid and d.tenantid=$tenantid and (to_char((To_timestamp(d.taxperiodfrom/1000) at time Zone 'Asia/Kolkata'),'YYYY') || '-' || to_char((To_timestamp(d.taxperiodto/1000) at time Zone 'Asia/Kolkata'),'YY')) != '2023-24' group by d.consumercode,(to_char((To_timestamp(d.taxperiodfrom/1000) at time Zone 'Asia/Kolkata'),'YYYY') || '-' || to_char((To_timestamp(d.taxperiodto/1000) at time Zone 'Asia/Kolkata'),'YY'))) tax where taxDue>0 group by tax.consumercode) as taxdata on propertydata.propertyid=taxdata.consumercode
+    select * from (SELECT  property.propertyid, usr.name as name, usr.mobilenumber as mobilenumber,usr.guardian as guardian,usr.guardianrelation as relation, property.usagecategory, locality  FROM EG_PT_PROPERTY property INNER JOIN EG_PT_ADDRESS address ON property.id = address.propertyid INNER JOIN EG_PT_OWNER owner ON property.id = owner.propertyid INNER JOIN eg_user usr ON owner.userid=usr.uuid WHERE  property.tenantId=$tenantid AND owner.status = 'ACTIVE' AND property.status = 'ACTIVE') as propertydata INNER JOIN (select consumercode,sum(taxdue) as taxDue, STRING_AGG(year || '(Rs.' || taxdue || ')',',')  as taxDueYear from ( select d.consumercode, (to_char((To_timestamp(d.taxperiodfrom/1000) at time Zone 'Asia/Kolkata'),'YYYY') || '-' || to_char((To_timestamp(d.taxperiodto/1000) at time Zone 'Asia/Kolkata'),'YY')) as year ,  sum(dd.taxamount)-sum(dd.collectionamount) as taxdue from egbs_demanddetail_v1 dd, egbs_demand_v1 d where dd.demandid=d.id and d.status!='CANCELLED' and dd.tenantid=$tenantid and d.tenantid=$tenantid and (to_char((To_timestamp(d.taxperiodfrom/1000) at time Zone 'Asia/Kolkata'),'YYYY') || '-' || to_char((To_timestamp(d.taxperiodto/1000) at time Zone 'Asia/Kolkata'),'YY')) != '2023-24' group by d.consumercode,(to_char((To_timestamp(d.taxperiodfrom/1000) at time Zone 'Asia/Kolkata'),'YYYY') || '-' || to_char((To_timestamp(d.taxperiodto/1000) at time Zone 'Asia/Kolkata'),'YY'))) tax where taxDue>0 group by tax.consumercode) as taxdata on propertydata.propertyid=taxdata.consumercode
   orderby: order by taxDue desc
 - reportName: PTGrievances
   decryptionPathId: DescriptionReport
@@ -347,9 +347,9 @@ ReportDefinitions:
     eg_pgr_address_v2.parentid = eg_pgr_service_v2.id
     AND eg_pgr_service_v2.applicationstatus IN ('PENDINGFORASSIGNMENT','PENDINGATLME','PENDINGFORREASSIGNMENT','REJECTED') AND eg_pgr_service_v2.servicecode IN('PropertyTaxAppealPetition','PropertyTaxAssessment','ChangeOfTitleOrOwnershipOfProperty','DealerRegistration','DealerAssessment','RefundClaims')
   orderby: ORDER BY servicerequestid, epa.createdtime desc
-  
+
 - reportName: PTCoverageReport
-  summary: Report is used for audit, day-end, and year-end finance reconciliation activities 
+  summary: Report is used for audit, day-end, and year-end finance reconciliation activities
   version: 1.0.0
   moduleName: pt-reports
   sourceColumns:
@@ -372,7 +372,7 @@ ReportDefinitions:
     label: NON RESIDENTIAL
     type: string
     source: pt
-    total: false 
+    total: false
   - name: MIXED
     label: MIXED
     type: string
@@ -388,37 +388,37 @@ ReportDefinitions:
     isMandatory: false
     localisationPrefix: TENANTS_MOHALLA_
     isLocalisationRequired: true
-    searchClause: AND pa.locality = $locality   
+    searchClause: AND pa.locality = $locality
   query: |
-        with paymentdata as(
-        select
-            distinct on (bill.consumercode)
-            bill.consumercode,p.transactiondate 
-        from
-            egcl_payment p
-        left outer join egcl_paymentdetail pd on
-            pd.paymentid = p.id
-        --left outer join egbs_bill_v1 bill on
-        left outer join egcl_bill bill on
-            pd.billid = bill.id
-        where
-            pd.businessservice = 'PT'
-            and p.paymentstatus != 'CANCELLED'
-        order by bill.consumercode,p.transactiondate desc
-        
-        )
-        
-        select
-        count(distinct propData.propertyid) as Total_properties,count(pd.consumercode) as tax_paying,
-        COUNT(case when (select usagecategory from eg_pt_property where propertyid=pd.consumercode and status='ACTIVE') = 'RESIDENTIAL' then 1 end) as RESIDENTIAL,
-        COUNT(case when (select usagecategory from eg_pt_property where propertyid=pd.consumercode and status='ACTIVE') like '%NONRESIDENTIAL%' then 1 end) as NONRESIDENTIAL,
-        COUNT(case when (select usagecategory from eg_pt_property where propertyid=pd.consumercode and status='ACTIVE') = 'MIXED' then 1 end) as MIXED
-        from
-        eg_pt_property propData JOIN eg_pt_address pa ON pa.propertyid=propData.id
-        LEFT OUTER JOIN paymentdata pd on pd.consumercode = propdata.propertyid  where propData.status='ACTIVE'
+    with paymentdata as(
+    select
+        distinct on (bill.consumercode)
+        bill.consumercode,p.transactiondate 
+    from
+        egcl_payment p
+    left outer join egcl_paymentdetail pd on
+        pd.paymentid = p.id
+    --left outer join egbs_bill_v1 bill on
+    left outer join egcl_bill bill on
+        pd.billid = bill.id
+    where
+        pd.businessservice = 'PT'
+        and p.paymentstatus != 'CANCELLED'
+    order by bill.consumercode,p.transactiondate desc
+
+    )
+
+    select
+    count(distinct propData.propertyid) as Total_properties,count(pd.consumercode) as tax_paying,
+    COUNT(case when (select usagecategory from eg_pt_property where propertyid=pd.consumercode and status='ACTIVE') = 'RESIDENTIAL' then 1 end) as RESIDENTIAL,
+    COUNT(case when (select usagecategory from eg_pt_property where propertyid=pd.consumercode and status='ACTIVE') like '%NONRESIDENTIAL%' then 1 end) as NONRESIDENTIAL,
+    COUNT(case when (select usagecategory from eg_pt_property where propertyid=pd.consumercode and status='ACTIVE') = 'MIXED' then 1 end) as MIXED
+    from
+    eg_pt_property propData JOIN eg_pt_address pa ON pa.propertyid=propData.id
+    LEFT OUTER JOIN paymentdata pd on pd.consumercode = propdata.propertyid  where propData.status='ACTIVE'
 - reportName: PTTop20TaxPayers
   decryptionPathId: DefaulterReport
-  summary: It helps administrators track the top 20 tax payers in the ULB. 
+  summary: It helps administrators track the top 20 tax payers in the ULB.
   version: 1.0.0
   moduleName: pt-reports
   sourceColumns:
@@ -446,14 +446,14 @@ ReportDefinitions:
     label: Financial Year
     type: string
     source: pt
-    total: false 
+    total: false
   - name: address
     label: Locality
     type: string
     source: pt
     total: false
     localisationPrefix: TENANTS_MOHALLA_
-    isLocalisationRequired: true 
+    isLocalisationRequired: true
   searchParams:
   - name: fromDate
     label: From Date
@@ -476,8 +476,8 @@ ReportDefinitions:
     isMandatory: false
     localisationPrefix: TENANTS_MOHALLA_
     isLocalisationRequired: true
-    searchClause: AND ptd.locality = $locality  
-  query: | 
-    SELECT property.propertyid as propertyid, CASE WHEN EXTRACT(MONTH FROM TO_TIMESTAMP(bill.createdtime / 1000)) >= 4 THEN EXTRACT(YEAR FROM TO_TIMESTAMP(bill.createdtime / 1000)) || '-' || EXTRACT(YEAR FROM TO_TIMESTAMP(bill.createdtime / 1000)) + 1 ELSE EXTRACT(YEAR FROM TO_TIMESTAMP(bill.createdtime / 1000)) - 1 || '-' || EXTRACT(YEAR FROM TO_TIMESTAMP(bill.createdtime / 1000)) END AS financial_year, users.name AS name, users.mobilenumber AS mobilenumber, ptd.locality as address, SUM(totalamountpaid) AS amountCollected FROM egcl_payment AS ep JOIN egcl_paymentdetail AS ed ON ep.id = ed.paymentid JOIN egcl_bill AS bill ON ed.billid = bill.id JOIN eg_pt_property AS property ON bill.consumercode = property.propertyid JOIN eg_pt_owner AS owner ON property.id = owner.propertyid JOIN eg_pt_address as ptd on property.id=ptd.propertyid  JOIN eg_user AS users ON owner.userid = users.uuid WHERE ed.businessservice = 'PT' AND ep.paymentstatus != 'CANCELLED' AND ep.tenantid = 'pg.citya' AND owner.status = 'ACTIVE' AND property.status = 'ACTIVE'
+    searchClause: AND ptd.locality = $locality
+  query: |
+    SELECT property.propertyid as propertyid, CASE WHEN EXTRACT(MONTH FROM TO_TIMESTAMP(bill.createdtime / 1000)) >= 4 THEN EXTRACT(YEAR FROM TO_TIMESTAMP(bill.createdtime / 1000)) || '-' || EXTRACT(YEAR FROM TO_TIMESTAMP(bill.createdtime / 1000)) + 1 ELSE EXTRACT(YEAR FROM TO_TIMESTAMP(bill.createdtime / 1000)) - 1 || '-' || EXTRACT(YEAR FROM TO_TIMESTAMP(bill.createdtime / 1000)) END AS financial_year, users.name AS name, users.mobilenumber AS mobilenumber, ptd.locality as address, SUM(totalamountpaid) AS amountCollected FROM egcl_payment AS ep JOIN egcl_paymentdetail AS ed ON ep.id = ed.paymentid JOIN egcl_bill AS bill ON ed.billid = bill.id JOIN eg_pt_property AS property ON bill.consumercode = property.propertyid JOIN eg_pt_owner AS owner ON property.id = owner.propertyid JOIN eg_pt_address as ptd on property.id=ptd.propertyid  JOIN eg_user AS users ON owner.userid = users.uuid WHERE ed.businessservice = 'PT' AND ep.paymentstatus != 'CANCELLED' AND ep.tenantid = 'dl.citya' AND owner.status = 'ACTIVE' AND property.status = 'ACTIVE'
   groupby: GROUP BY  property.propertyid, financial_year, users.name, users.mobilenumber, ptd.locality
   orderby: ORDER BY amountCollected DESC LIMIT 20

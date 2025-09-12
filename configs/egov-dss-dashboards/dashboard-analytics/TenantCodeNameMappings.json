@@ -2,23 +2,23 @@
   "comment" : "This mapping is used for resolving the miss match between MDM citynames and waterchargesconsumers citynames",
     "ulbCityNamesMappings": [
 		{
-			"tenantCode":"pg.citya",
+			"tenantCode":"dl.citya",
 			"tenantValue":"City A"
 		},
 		{
-			"tenantCode":"pg.cityb",
+			"tenantCode":"dl.cityb",
 			"tenantValue":"City B"
 		},
 		{
-			"tenantCode":"pg.cityc",
+			"tenantCode":"dl.cityc",
 			"tenantValue":"City C"
 		},
 		{
-			"tenantCode":"pg.cityd",
+			"tenantCode":"dl.cityd",
 			"tenantValue":"City D"
 		},
 		{
-			"tenantCode":"pg.citye",
+			"tenantCode":"dl.citye",
 			"tenantValue":"City E"
 		}
 	]

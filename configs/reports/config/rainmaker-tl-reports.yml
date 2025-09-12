@@ -108,7 +108,7 @@ ReportDefinitions:
     type: epoch
     source: tl
     isMandatory: true
-    searchClause: AND receipt.createddate  <= $toDate 
+    searchClause: AND receipt.createddate  <= $toDate
   query: |
     SELECT 
       licensenumber,
@@ -261,7 +261,7 @@ ReportDefinitions:
     type: epoch
     source: tl
     isMandatory: true
-    searchClause: AND receipt.createddate  <= $toDate 
+    searchClause: AND receipt.createddate  <= $toDate
   query: |
     SELECT 
       initcap(split_part(tl.tenantId, '.', 2)) as tenantId,
@@ -300,7 +300,7 @@ ReportDefinitions:
     INNER JOIN egcl_instrumentheader_v1 as ih ON ih.id = ri.instrumentheader
     LEFT OUTER JOIN (SELECT tradelicensedetailid,array_to_string(array_agg(message.message),',') AS acc FROM eg_tl_accessory 
     LEFT OUTER JOIN message ON split_part(message.code,'_',2) = accessorycategory AND message.locale = 'en_IN' GROUP BY 1 ) tlacc ON tlacc.tradelicensedetailid = tld.id 
-    WHERE tl.tenantId != 'pg.testing'
+    WHERE tl.tenantId != 'dl.testing'
 - reportName: TradeLicenseCancelledRegistryReport
   decryptionPathId: StateLevelTradeLicenseRegistryReport
   summary: TL Cancelled Receipt Register Report
@@ -354,7 +354,7 @@ ReportDefinitions:
     type: epoch
     source: tl
     isMandatory: true
-    searchClause: AND tl.lastmodifiedtime  <= $toDate 
+    searchClause: AND tl.lastmodifiedtime  <= $toDate
   query: |
     SELECT licensenumber,
       tl.lastmodifiedtime,
@@ -378,8 +378,7 @@ ReportDefinitions:
     ) tlown ON tlown.tradelicensedetailid = tld.id
     LEFT OUTER JOIN (SELECT tradelicensedetailid,array_to_string(array_agg(message.message),',') AS acc FROM eg_tl_accessory 
     LEFT OUTER JOIN message ON split_part(message.code,'_',2) = accessorycategory AND message.locale = 'en_IN' GROUP BY 1 ) tlacc ON tlacc.tradelicensedetailid = tld.id 
-    WHERE tl.status='CANCELLED' and tl.tenantId!='pg.testing'
-
+    WHERE tl.status='CANCELLED' and tl.tenantId!='dl.testing'
 
 - reportName: TradeWiseCollectionReport
   summary: Collection according to tradeTypes
@@ -429,7 +428,7 @@ ReportDefinitions:
       from egcl_receiptheader_v1 as rh
     inner join egcl_receiptinstrument_v1 as ri on ri.receiptheader = rh.id
     inner join egcl_instrumentheader_v1 as ih on ih.id = ri.instrumentheader
-    where rh.businessdetails = 'TL' and rh.status !='Cancelled' and rh.tenantid !='pg.testing'
+    where rh.businessdetails = 'TL' and rh.status !='Cancelled' and rh.tenantid !='dl.testing'
     AND rh.tenantId LIKE $tenantid
   groupby: GROUP BY rh.tenantId
 
@@ -439,7 +438,7 @@ ReportDefinitions:
   moduleName: rainmaker-tl
   externalService:
   - entity: $.messages[*]
-    apiURL: http://egov-localization:8080/localization/messages/v1/_search?locale=en_IN&tenantId=pg&module=rainmaker-tl
+    apiURL: http://egov-localization:8080/localization/messages/v1/_search?locale=en_IN&tenantId=dl&module=rainmaker-tl
     keyOrder: code,message
     tableName: tbl_localization
   sourceColumns:
@@ -524,19 +523,18 @@ ReportDefinitions:
     isMandatory: false
     searchClause: AND tl.lastmodifiedtime <= $toDate
   query: |
-     SELECT 
-        initcap(split_part(tenantId, '.', 2)) as tenantId, 
-        SUM(CASE status when 'REJECTED' then 1 else 0 end) as rejected,
-        SUM(CASE status when 'INITIATED' then 1 else 0 end) as initiated,
-        SUM(CASE status when 'PAID' then 1 else 0 end) as paid,
-        SUM(CASE status when 'APPROVED' then 1 else 0 end) as approved,
-        SUM(CASE status when 'APPLIED' then 1 else 0 end) as applied,
-        SUM(CASE status when 'CANCELLED' then 1 else 0 end) as cancelled
-      FROM eg_tl_tradelicense as tl
-      WHERE tl.tenantid != 'pg.testing'
+    SELECT 
+       initcap(split_part(tenantId, '.', 2)) as tenantId, 
+       SUM(CASE status when 'REJECTED' then 1 else 0 end) as rejected,
+       SUM(CASE status when 'INITIATED' then 1 else 0 end) as initiated,
+       SUM(CASE status when 'PAID' then 1 else 0 end) as paid,
+       SUM(CASE status when 'APPROVED' then 1 else 0 end) as approved,
+       SUM(CASE status when 'APPLIED' then 1 else 0 end) as applied,
+       SUM(CASE status when 'CANCELLED' then 1 else 0 end) as cancelled
+     FROM eg_tl_tradelicense as tl
+     WHERE tl.tenantid != 'dl.testing'
   groupby: GROUP BY tenantid
   orderby: ORDER BY tenantid
-
 
 - reportName: StateLevelStatus
   summary: Nummber of applications by there status state level
@@ -577,8 +575,6 @@ ReportDefinitions:
   query: SELECT COUNT(applicationnumber) as total,message.message as status from eg_tl_tradelicense tl LEFT OUTER JOIN (select distinct module,code,locale,tenantid,message from message where module='rainmaker-tl' ) as message ON split_part(message.code,'_',2) = status AND message.locale = 'en_IN' WHERE 1=1
   groupby: GROUP BY message.message
   orderby: ORDER BY case message.message when 'Pending Application' then 1 when 'Pending Payment' then 2 when 'Pending Approval' then 3 when 'Approved' then 4 when 'Rejected' then 5 when 'Cancelled' then 6 else 7 end
-
-
 
 - reportName: StateLevelTradeWiseCollection
   summary: Collection according to tradeTypes state level
@@ -641,7 +637,7 @@ ReportDefinitions:
       from egcl_receiptheader_v1 as rh
     inner join egcl_receiptinstrument_v1 as ri on ri.receiptheader = rh.id
     inner join egcl_instrumentheader_v1 as ih on ih.id = ri.instrumentheader
-    where rh.businessdetails = 'TL' and rh.status !='Cancelled' and rh.tenantid !='pg.testing'
+    where rh.businessdetails = 'TL' and rh.status !='Cancelled' and rh.tenantid !='dl.testing'
   groupby: GROUP BY rh.tenantId
   orderby: ORDER BY rh.tenantId asc
 - reportName: StateLevelTradeLicenseRegistryReport
@@ -814,7 +810,7 @@ ReportDefinitions:
     type: epoch
     source: tl
     isMandatory: true
-    searchClause: AND tl.createdtime  <= $toDate 
+    searchClause: AND tl.createdtime  <= $toDate
   - name: instrumentType
     label: reports.tl.instrumenttype
     type: singlevaluelist
@@ -931,7 +927,7 @@ ReportDefinitions:
     type: epoch
     source: tl
     isMandatory: true
-    searchClause: AND applicationdate  <= $toDate 
+    searchClause: AND applicationdate  <= $toDate
   - name: applicationChannel
     label: Application Channel
     type: multivaluelist
@@ -957,7 +953,6 @@ ReportDefinitions:
     pattern: 'list://NEWTL-INITIATED:NEWTL-INITIATED,NEWTL-APPLIED:NEWTL-APPLIED,NEWTL-FIELDINSPECTION:NEWTL-FIELDINSPECTION,NEWTL-PENDINGAPPROVAL:NEWTL-PENDINGAPPROVAL,NEWTL-APPROVED:NEWTL-APPROVED,NEWTL-PENDINGPAYMENT:NEWTL-PENDINGPAYMENT,NEWTL-CITIZENACTIONREQUIRED:NEWTL-CITIZENACTIONREQUIRED,NEWTL-MANUALEXPIRED:NEWTL-MANUALEXPIRED,NEWTL-EXPIRED:NEWTL-EXPIRED,NEWTL-REJECTED:NEWTL-REJECTED,NEWTL-CANCELLED:NEWTL-CANCELLED,DIRECTRENEWAL-APPLIED:DIRECTRENEWAL-APPLIED,DIRECTRENEWAL-PENDINGPAYMENT:DIRECTRENEWAL-PENDINGPAYMENT,DIRECTRENEWAL-APPROVED:DIRECTRENEWAL-APPROVED,DIRECTRENEWAL-CANCELLED:DIRECTRENEWAL-CANCELLED,DIRECTRENEWAL-MANUALEXPIRED:DIRECTRENEWAL-MANUALEXPIRED,DIRECTRENEWAL-EXPIRED:DIRECTRENEWAL-EXPIRED,EDITRENEWAL-INITIATED:EDITRENEWAL-INITIATED,EDITRENEWAL-APPLIED:EDITRENEWAL-APPLIED,EDITRENEWAL-FIELDINSPECTION:EDITRENEWAL-FIELDINSPECTION,EDITRENEWAL-PENDINGAPPROVAL:EDITRENEWAL-PENDINGAPPROVAL,EDITRENEWAL-APPROVED:EDITRENEWAL-APPROVED,EDITRENEWAL-PENDINGPAYMENT:EDITRENEWAL-PENDINGPAYMENT,EDITRENEWAL-CITIZENACTIONREQUIRED:EDITRENEWAL-CITIZENACTIONREQUIRED,EDITRENEWAL-MANUALEXPIRED:EDITRENEWAL-MANUALEXPIRED,EDITRENEWAL-EXPIRED:EDITRENEWAL-EXPIRED,EDITRENEWAL-REJECTED:EDITRENEWAL-REJECTED,EDITRENEWAL-CANCELLED:EDITRENEWAL-CANCELLED'
   query: select distinct(applicationnumber), usr.uuid as uuid, applicationdate as normalappdate, to_char(To_timestamp(applicationdate / 1000), 'DD/MM/YYYY') as applicationdate , tld.channel as applicationchannel, (CONCAT(UPPER(tl.workflowcode),'-',tl.status)) as workflowstatus, tl.workflowcode as applicationtype, usr.name as name, split_part(tlunit.tradetype,'.',2) as tradetype, deptmap_def.code as tradesubtype, tradename, tl.status as applicationstatus, case when isterminatestate=true then null else userassignee.name end as currentowner,coalesce(licensenumber,'NA') as licensenumber from eg_tl_tradelicense tl inner join eg_tl_tradelicensedetail tld on tl.id=tld.tradelicenseid inner join eg_user usr ON tl.createdby = usr.uuid inner join eg_tl_owner on tld.id=eg_tl_owner.tradelicensedetailid inner join eg_tl_tradeunit tlunit on tlunit.tradelicensedetailid=tld.id inner join eg_wf_processinstance_v2 pi on pi.businessid=tl.applicationnumber inner join (select businessid, max(createdtime) as maxtime from eg_wf_processinstance_v2 group by businessid) wfg ON pi.businessid=wfg.businessid and maxtime=pi.createdtime inner join eg_wf_state_v2 st on pi.status=st.uuid left outer join eg_wf_assignee_v2 assignee on assignee.processinstanceid = pi.id left outer join eg_user userassignee on assignee.assignee = userassignee.uuid inner join (VALUES tbl_def_dept) AS deptmap_def(code,name) ON deptmap_def.code=tlunit.tradetype where tl.businessservice='TL'
   orderby: ORDER BY normalappdate asc
-
 
 - reportName: TLRegistryReport
   decryptionPathId: TLRegistryReport
@@ -1060,7 +1055,7 @@ ReportDefinitions:
     type: epoch
     source: tl
     isMandatory: true
-    searchClause: AND tl.issueddate  <= $toDate 
+    searchClause: AND tl.issueddate  <= $toDate
   - name: locality
     label: reports.tl.locality
     type: multivaluelist
@@ -1156,7 +1151,7 @@ ReportDefinitions:
     type: epoch
     source: tl
     isMandatory: true
-    searchClause: AND tl.issueddate  <= $toDate 
+    searchClause: AND tl.issueddate  <= $toDate
   - name: financialYear
     label: FinancialYear
     type: singlevaluelist
@@ -1222,7 +1217,7 @@ ReportDefinitions:
     type: epoch
     source: tl
     isMandatory: true
-    searchClause: AND tl_data.createdtime  <= $toDate 
+    searchClause: AND tl_data.createdtime  <= $toDate
   - name: locality
     label: Locality
     type: singlevaluelist
@@ -1232,8 +1227,8 @@ ReportDefinitions:
     isMandatory: false
     localisationPrefix: TENANTS_MOHALLA_
     isLocalisationRequired: true
-    searchClause: AND addr.locality = $locality 
+    searchClause: AND addr.locality = $locality
   query: |
-    with tl_data as (select tld.id, tl.status, tl.licensenumber, tl.validto,tl.createdtime,usr.uuid,usr.name,usr.mobilenumber, financialyear from eg_tl_tradelicense tl inner join eg_tl_tradelicensedetail tld on tl.id= tld.tradelicenseid  LEFT JOIN eg_tl_owner owner ON owner.tradelicensedetailid=tld.id LEFT JOIN eg_user usr on usr.uuid=owner.id where tl.businessservice='TL' and financialyear=(select max(financialyear) from eg_tl_tradelicense where licensenumber=tl.licensenumber) and tl.tenantid= 'pg.citya' and tl.status IN ('EXPIRED','APPROVED','PENDINGPAYMENT') order by tl.lastmodifiedtime desc)
+    with tl_data as (select tld.id, tl.status, tl.licensenumber, tl.validto,tl.createdtime,usr.uuid,usr.name,usr.mobilenumber, financialyear from eg_tl_tradelicense tl inner join eg_tl_tradelicensedetail tld on tl.id= tld.tradelicenseid  LEFT JOIN eg_tl_owner owner ON owner.tradelicensedetailid=tld.id LEFT JOIN eg_user usr on usr.uuid=owner.id where tl.businessservice='TL' and financialyear=(select max(financialyear) from eg_tl_tradelicense where licensenumber=tl.licensenumber) and tl.tenantid= 'dl.citya' and tl.status IN ('EXPIRED','APPROVED','PENDINGPAYMENT') order by tl.lastmodifiedtime desc)
     SELECT addr.locality,tl_data.status,to_char((To_timestamp(tl_data.validto/1000) at time Zone 'Asia/Kolkata'),'DD-MM-YYYY') as valid_date, tl_data.name,tl_data.uuid, tl_data.mobilenumber,tl_data.licensenumber,tl_data.financialyear from tl_data inner join eg_tl_address addr on addr.tradelicensedetailid=tl_data.id where tl_data.validto <= (CAST(EXTRACT(epoch FROM NOW()) AS BIGINT)*1000)
-  order by : ORDER BY tl_data.licensenumber DESC
+  order by: ORDER BY tl_data.licensenumber DESC

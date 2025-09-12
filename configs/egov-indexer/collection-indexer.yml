@@ -1,7 +1,7 @@
 ServiceMaps:
- serviceName: Collection Services
- version: 1.0.0
- mappings:
+  serviceName: Collection Services
+  version: 1.0.0
+  mappings:
   - topic: egov.collection.receipt-create
     configKey: INDEX
     indexes:
@@ -12,7 +12,7 @@ ServiceMaps:
       timeStampField: $.auditDetails.createdDate
       jsonPath: $.Receipt.*
       customJsonMapping:
-        indexMapping: {"Data":{"tenantId":"","transactionId":"","Bill":{},"auditDetails":{},"instrument":{},"tenantData":{},"@timestamp":"timestamp"}}
+        indexMapping: { "Data": { "tenantId": "", "transactionId": "", "Bill": {}, "auditDetails": {}, "instrument": {}, "tenantData": {}, "@timestamp": "timestamp" } }
         fieldMapping:
         - inJsonPath: $.tenantId
           outJsonPath: $.Data.tenantId
@@ -30,7 +30,7 @@ ServiceMaps:
         - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
           moduleName: tenant
           masterName: tenants
-          tenantId: pg
+          tenantId: dl
           filter: "[?(@.code == $tenant)]"
           filterMapping:
           - variable: $tenant
@@ -59,7 +59,7 @@ ServiceMaps:
       timeStampField: $.auditDetails.createdDate
       jsonPath: $.Receipt.*
       customJsonMapping:
-        indexMapping: {"Data":{"tenantId":"","transactionId":"","Bill":{},"auditDetails":{},"instrument":{},"tenantData":{},"@timestamp":"timestamp"}}
+        indexMapping: { "Data": { "tenantId": "", "transactionId": "", "Bill": {}, "auditDetails": {}, "instrument": {}, "tenantData": {}, "@timestamp": "timestamp" } }
         fieldMapping:
         - inJsonPath: $.tenantId
           outJsonPath: $.Data.tenantId
@@ -77,7 +77,7 @@ ServiceMaps:
         - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
           moduleName: tenant
           masterName: tenants
-          tenantId: pg
+          tenantId: dl
           filter: "[?(@.code == $tenant)]"
           filterMapping:
           - variable: $tenant
