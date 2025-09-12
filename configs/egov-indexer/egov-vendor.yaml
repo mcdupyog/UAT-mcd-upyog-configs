@@ -1,7 +1,7 @@
 ServiceMaps:
- serviceName: vendor
- version: 1.0.0
- mappings:
+  serviceName: vendor
+  version: 1.0.0
+  mappings:
   - topic: save-vendor-application
     configKey: INDEX
     indexes:
@@ -12,7 +12,7 @@ ServiceMaps:
       timeStampField: $.auditDetails.createdTime
       jsonPath: $.vendor
       customJsonMapping:
-        indexMapping: {"Data":{"vendor":{},"tenantData":{}}}
+        indexMapping: { "Data": { "vendor": {}, "tenantData": {} } }
         fieldMapping:
         - inJsonPath: $
           outJsonPath: $.Data.vendor
@@ -20,7 +20,7 @@ ServiceMaps:
         - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
           moduleName: tenant
           masterName: tenants
-          tenantId: pg
+          tenantId: dl
           filter: "[?(@.code == $tenant)]"
           filterMapping:
           - variable: $tenant
@@ -39,7 +39,7 @@ ServiceMaps:
       timeStampField: $.auditDetails.createdTime
       jsonPath: $.vendor.*
       customJsonMapping:
-        indexMapping: {"Data":{"vendor":{},"tenantData":{}}}
+        indexMapping: { "Data": { "vendor": {}, "tenantData": {} } }
         fieldMapping:
         - inJsonPath: $
           outJsonPath: $.Data.vendor
@@ -47,7 +47,7 @@ ServiceMaps:
         - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
           moduleName: tenant
           masterName: tenants
-          tenantId: pg
+          tenantId: dl
           filter: "[?(@.code == $tenant)]"
           filterMapping:
           - variable: $tenant

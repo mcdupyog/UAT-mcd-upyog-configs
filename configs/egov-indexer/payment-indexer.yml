@@ -1,7 +1,7 @@
 ServiceMaps:
- serviceName: Collection Services
- version: 1.0.0
- mappings:
+  serviceName: Collection Services
+  version: 1.0.0
+  mappings:
   - topic: egov.collection.payment-create
     configKey: INDEX
     indexes:
@@ -12,7 +12,7 @@ ServiceMaps:
       timeStampField: $.auditDetails.createdTime
       jsonPath: $.Payment
       customJsonMapping:
-        indexMapping: {"Data":{"tenantId":"","id":"","transactionNumber":"","transactionDate":1,"paymentMode":"","paymentStatus":"","payer":{"id":"","name":""},"paidBy":"","paymentDetails":{},"auditDetails":{},"additionalDetails":{},"tenantData":{},"@timestamp":"timestamp"}}
+        indexMapping: { "Data": { "tenantId": "", "id": "", "transactionNumber": "", "transactionDate": 1, "paymentMode": "", "paymentStatus": "", "payer": { "id": "", "name": "" }, "paidBy": "", "paymentDetails": {}, "auditDetails": {}, "additionalDetails": {}, "tenantData": {}, "@timestamp": "timestamp" } }
         fieldMapping:
         - inJsonPath: $.tenantId
           outJsonPath: $.Data.tenantId
@@ -44,7 +44,7 @@ ServiceMaps:
         - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
           moduleName: tenant
           masterName: tenants
-          tenantId: pg
+          tenantId: dl
           filter: "[?(@.code == $tenant)]"
           filterMapping:
           - variable: $tenant
@@ -52,7 +52,6 @@ ServiceMaps:
           uriResponseMapping:
           - inJsonPath: $.MdmsRes.tenant.tenants
             outJsonPath: $.Data.tenantData
-
 
   - topic: egov.collection.payment-update
     configKey: INDEX
@@ -64,7 +63,7 @@ ServiceMaps:
       timeStampField: $.auditDetails.createdTime
       jsonPath: $.Payment
       customJsonMapping:
-        indexMapping: {"Data":{"tenantId":"","id":"","transactionNumber":"","transactionDate":1,"paymentMode":"","paymentStatus":"","payer":{"id":"","name":""},"paidBy":"","paymentDetails":{},"auditDetails":{},"additionalDetails":{},"tenantData":{},"@timestamp":"timestamp"}}
+        indexMapping: { "Data": { "tenantId": "", "id": "", "transactionNumber": "", "transactionDate": 1, "paymentMode": "", "paymentStatus": "", "payer": { "id": "", "name": "" }, "paidBy": "", "paymentDetails": {}, "auditDetails": {}, "additionalDetails": {}, "tenantData": {}, "@timestamp": "timestamp" } }
         fieldMapping:
         - inJsonPath: $.tenantId
           outJsonPath: $.Data.tenantId
@@ -96,7 +95,7 @@ ServiceMaps:
         - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
           moduleName: tenant
           masterName: tenants
-          tenantId: pg
+          tenantId: dl
           filter: "[?(@.code == $tenant)]"
           filterMapping:
           - variable: $tenant
@@ -115,7 +114,7 @@ ServiceMaps:
       timeStampField: $.auditDetails.createdTime
       jsonPath: $.Payment
       customJsonMapping:
-        indexMapping: {"Data":{"tenantId":"","id":"","transactionNumber":"","transactionDate":1,"paymentMode":"","paymentStatus":"","payer":{"id":"","name":""},"paidBy":"","paymentDetails":{},"auditDetails":{},"additionalDetails":{},"tenantData":{},"@timestamp":"timestamp"}}
+        indexMapping: { "Data": { "tenantId": "", "id": "", "transactionNumber": "", "transactionDate": 1, "paymentMode": "", "paymentStatus": "", "payer": { "id": "", "name": "" }, "paidBy": "", "paymentDetails": {}, "auditDetails": {}, "additionalDetails": {}, "tenantData": {}, "@timestamp": "timestamp" } }
         fieldMapping:
         - inJsonPath: $.tenantId
           outJsonPath: $.Data.tenantId
@@ -147,7 +146,7 @@ ServiceMaps:
         - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
           moduleName: tenant
           masterName: tenants
-          tenantId: pg
+          tenantId: dl
           filter: "[?(@.code == $tenant)]"
           filterMapping:
           - variable: $tenant
@@ -166,7 +165,7 @@ ServiceMaps:
       timeStampField: $.auditDetails.createdTime
       jsonPath: $.Payments.*
       customJsonMapping:
-        indexMapping: {"Data":{"tenantId":"","id":"","transactionNumber":"","transactionDate":1,"paymentMode":"","paymentStatus":"","payer":{"id":"","name":""},"paidBy":"","paymentDetails":{},"auditDetails":{},"additionalDetails":{},"tenantData":{},"@timestamp":"timestamp"}}
+        indexMapping: { "Data": { "tenantId": "", "id": "", "transactionNumber": "", "transactionDate": 1, "paymentMode": "", "paymentStatus": "", "payer": { "id": "", "name": "" }, "paidBy": "", "paymentDetails": {}, "auditDetails": {}, "additionalDetails": {}, "tenantData": {}, "@timestamp": "timestamp" } }
         fieldMapping:
         - inJsonPath: $.tenantId
           outJsonPath: $.Data.tenantId
@@ -198,7 +197,7 @@ ServiceMaps:
         - path: http://egov-mdms-service.egov:8080/egov-mdms-service/v1/_search
           moduleName: tenant
           masterName: tenants
-          tenantId: pg
+          tenantId: dl
           filter: "[?(@.code == $tenant)]"
           filterMapping:
           - variable: $tenant

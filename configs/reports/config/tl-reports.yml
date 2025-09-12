@@ -102,7 +102,7 @@ ReportDefinitions:
     type: epoch
     source: tl
     isMandatory: false
-    searchClause: AND receipt.createddate  <= $toDate 
+    searchClause: AND receipt.createddate  <= $toDate
   query: |
     SELECT 
       licensenumber,
@@ -248,7 +248,7 @@ ReportDefinitions:
     type: epoch
     source: tl
     isMandatory: false
-    searchClause: AND receipt.createddate  <= $toDate 
+    searchClause: AND receipt.createddate  <= $toDate
   query: |
     SELECT 
       initcap(split_part(tl.tenantId, '.', 2)) as tenantId,
@@ -340,7 +340,7 @@ ReportDefinitions:
     type: epoch
     source: tl
     isMandatory: false
-    searchClause: AND tl.lastmodifiedtime  <= $toDate 
+    searchClause: AND tl.lastmodifiedtime  <= $toDate
   query: |
     SELECT licensenumber,
       tl.lastmodifiedtime,
@@ -365,7 +365,6 @@ ReportDefinitions:
     LEFT OUTER JOIN (SELECT tradelicensedetailid,array_to_string(array_agg(message.message),',') AS acc FROM eg_tl_accessory 
     LEFT OUTER JOIN message ON split_part(message.code,'_',2) = accessorycategory AND message.locale = 'en_IN' GROUP BY 1 ) tlacc ON tlacc.tradelicensedetailid = tld.id 
     WHERE tl.status='CANCELLED' and tl.tenantId=$tenantId
-
 
 - reportName: TradeWiseCollectionReport
   summary: Collection according to tradeTypes
@@ -428,14 +427,13 @@ ReportDefinitions:
     AND tl.tenantId LIKE $tenantid
   groupby: GROUP BY tradeSubType
 
-
 - reportName: TradeLicenseApplicationStatusReport
   summary: Nummber of applications by there status
   version: 1.0.0
   moduleName: rainmaker-tl
   externalService:
   - entity: $.messages[*]
-    apiURL: http://egov-localization:8080/localization/messages/v1/_search?locale=en_IN&tenantId=pg&module=rainmaker-tl
+    apiURL: http://egov-localization:8080/localization/messages/v1/_search?locale=en_IN&tenantId=dl&module=rainmaker-tl
     keyOrder: code,message
     tableName: tbl_localization
   sourceColumns:
@@ -525,20 +523,19 @@ ReportDefinitions:
     isMandatory: false
     searchClause: AND tl.lastmodifiedtime <= $toDate
   query: |
-     SELECT 
-        initcap(split_part(tenantId, '.', 2)) as tenantId, 
-        count(*) as total,
-        SUM(CASE status when 'REJECTED' then 1 else 0 end) as rejected,
-        SUM(CASE status when 'INITIATED' then 1 else 0 end) as initiated,
-        SUM(CASE status when 'PAID' then 1 else 0 end) as paid,
-        SUM(CASE status when 'APPROVED' then 1 else 0 end) as approved,
-        SUM(CASE status when 'APPLIED' then 1 else 0 end) as applied,
-        SUM(CASE status when 'CANCELLED' then 1 else 0 end) as cancelled
-      FROM eg_tl_tradelicense as tl
-      WHERE tl.tenantid != 'pb.testing'
+    SELECT 
+       initcap(split_part(tenantId, '.', 2)) as tenantId, 
+       count(*) as total,
+       SUM(CASE status when 'REJECTED' then 1 else 0 end) as rejected,
+       SUM(CASE status when 'INITIATED' then 1 else 0 end) as initiated,
+       SUM(CASE status when 'PAID' then 1 else 0 end) as paid,
+       SUM(CASE status when 'APPROVED' then 1 else 0 end) as approved,
+       SUM(CASE status when 'APPLIED' then 1 else 0 end) as applied,
+       SUM(CASE status when 'CANCELLED' then 1 else 0 end) as cancelled
+     FROM eg_tl_tradelicense as tl
+     WHERE tl.tenantid != 'pb.testing'
   groupby: GROUP BY tenantid
   orderby: ORDER BY tenantid
-
 
 - reportName: StateLevelStatus
   summary: Nummber of applications by there status state level
@@ -579,8 +576,6 @@ ReportDefinitions:
   query: SELECT COUNT(applicationnumber) as total,message.message as status from eg_tl_tradelicense tl LEFT OUTER JOIN message ON split_part(message.code,'_',2) = status AND message.locale = 'en_IN' WHERE 1=1
   groupby: GROUP BY message.message
   orderby: ORDER BY case message.message when 'Pending Application' then 1 when 'Pending Payment' then 2 when 'Pending Approval' then 3 when 'Approved' then 4 when 'Rejected' then 5 when 'Cancelled' then 6 else 7 end
-
-
 
 - reportName: StateLevelTradeWiseCollection
   summary: Collection according to tradeTypes state level
@@ -656,7 +651,6 @@ ReportDefinitions:
 
   groupby: GROUP BY tl.tenantId,tradeSubType
   orderby: ORDER BY tl.tenantId asc
-
 
 - reportName: StateLevelTradeLicenseRegistryReport
   summary: TL Basic Report State Level
